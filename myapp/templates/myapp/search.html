@@ -1,0 +1,454 @@
+{% extends 'myapp/base.html' %}
+{% load static %}
+
+{% block content %}
+<br><br>
+<div class="search-container">
+    <!-- Search Form -->
+    <form method="get" action="{% url 'search' %}" class="search-form">
+        <div class="search-input-container">
+            <input type="text" id="searchInput" placeholder="Search terms or rules...">
+            <button type="button" id="searchBtn">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+        <!-- Hidden checkboxes (always enabled) -->
+        <div class="search-options" style="display: none;">
+            <label>
+                <input type="checkbox" id="searchTerms" checked> Terms
+            </label>
+            <label>
+                <input type="checkbox" id="searchRules" checked> Rules
+            </label>
+            <label>
+                <input type="checkbox" id="fuzzySearch" checked> Fuzzy Search
+            </label>
+        </div>
+    </form>
+
+    <!-- Results -->
+    <div id="results" class="hidden">
+        <div class="results-header">
+            <h3 id="resultsTitle">Search Results</h3>
+            <span id="resultsCount" class="results-count">0 results</span>
+        </div>
+        
+        <div id="termResults" class="results-section">
+            <h4>Terms</h4>
+            <ul id="termList">
+                {% for term in terms %}
+                    <li class="search-item" data-title="{{ term.title|lower }}">
+                        <details>
+                            <summary>{{ term.title }}</summary>
+                            <div class="content">
+                                <p>{{ term.explanation }}</p>
+                            </div>
+                        </details>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div id="ruleResults" class="results-section">
+            <h4>Rules</h4>
+            <ul id="ruleList">
+                {% for rule in rules %}
+                    <li class="search-item" data-title="{{ rule.title|lower }}">
+                        <details>
+                            <summary>{{ rule.title }}</summary>
+                            <div class="content">
+                                <p>{{ rule.explanation }}</p>
+                            </div>
+                        </etails>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div id="noResults" class="no-results">
+            <i class="fas fa-search"></i>
+            <p>No results found. Try different keywords.</p>
+        </div>
+    </div>
+</div>
+
+<style>
+.search-container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 25px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.search-input-container {
+    position: relative;
+    display: flex;
+    margin-bottom: 15px;
+}
+
+.search-input-container input {
+    flex: 1;
+    padding: 14px 20px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    outline: none;
+    transition: all 0.3s ease;
+    font-size: 16px;
+    background: white;
+}
+
+.search-input-container input:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.search-input-container button {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    height: calc(100% - 10px);
+    padding: 0 20px;
+    background: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.search-input-container button:hover {
+    background: #2563eb;
+    transform: translateY(-1px);
+}
+
+.search-options {
+    display: none; /* Hide the options completely */
+}
+
+.results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.results-header h3 {
+    margin: 0;
+    color: #1e293b;
+    font-weight: 600;
+}
+
+.results-count {
+    font-size: 14px;
+    color: #64748b;
+}
+
+.results-section {
+    margin-bottom: 25px;
+}
+
+.results-section h4 {
+    margin: 0 0 15px 0;
+    color: #334155;
+    font-weight: 600;
+    font-size: 18px;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.search-item {
+    margin-bottom: 10px;
+    border-radius: 12px;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.search-item:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.search-item details {
+    padding: 0;
+}
+
+.search-item summary {
+    padding: 16px 20px;
+    cursor: pointer;
+    font-weight: 600;
+    color: #1e293b;
+    list-style: none;
+    position: relative;
+    outline: none;
+}
+
+.search-item summary::-webkit-details-marker {
+    display: none;
+}
+
+.search-item summary:after {
+    content: '+';
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 18px;
+    transition: transform 0.3s ease;
+}
+
+.search-item details[open] summary:after {
+    content: '-';
+}
+
+.search-item .content {
+    padding: 0 20px 20px 20px;
+}
+
+.search-item .content p {
+    margin: 0;
+    color: #475569;
+    line-height: 1.6;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    max-width: 100%;
+}
+
+.no-results {
+    text-align: center;
+    padding: 40px 20px;
+    color: #64748b;
+}
+
+.no-results i {
+    font-size: 48px;
+    margin-bottom: 15px;
+    color: #cbd5e1;
+}
+
+.no-results p {
+    margin: 0;
+    font-size: 16px;
+}
+
+.hidden {
+    display: none;
+}
+
+/* Highlighting for search matches */
+.highlight {
+    background-color: #ffeb3b;
+    padding: 0 2px;
+    border-radius: 3px;
+}
+
+/* Animation for results */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.search-item {
+    animation: fadeIn 0.3s ease forwards;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .search-container {
+        margin: 10px;
+        padding: 20px;
+    }
+    
+    .results-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    
+    .search-input-container button {
+        position: relative;
+        margin-top: 10px;
+        width: 100%;
+        height: auto;
+        padding: 12px;
+    }
+    
+    .search-input-container {
+        flex-direction: column;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const searchBtn = document.getElementById('searchBtn');
+    const resultsDiv = document.getElementById('results');
+    const noResults = document.getElementById('noResults');
+    const resultsCount = document.getElementById('resultsCount');
+    const resultsTitle = document.getElementById('resultsTitle');
+    const termResults = document.getElementById('termResults');
+    const ruleResults = document.getElementById('ruleResults');
+    
+    const allItems = document.querySelectorAll('.search-item');
+    
+    // Search only by titles
+    function runSearch() {
+        let query = searchInput.value.trim().toLowerCase();
+        
+        if (!query) {
+            resultsDiv.classList.add('hidden');
+            return;
+        }
+        
+        resultsDiv.classList.remove('hidden');
+        noResults.style.display = 'none';
+        termResults.style.display = 'block';
+        ruleResults.style.display = 'block';
+        
+        let visibleCount = 0;
+        
+        allItems.forEach(item => {
+            const title = item.getAttribute('data-title');
+            
+            // Search only in titles using fuzzy matching
+            let matches = fuzzyMatch(title, query);
+            
+            if (matches) {
+                item.style.display = 'block';
+                visibleCount++;
+                
+                // Highlight matches in the title
+                highlightText(item, query);
+            } else {
+                item.style.display = 'none';
+                removeHighlights(item);
+            }
+        });
+        
+        // Update results count
+        resultsCount.textContent = `${visibleCount} result${visibleCount !== 1 ? 's' : ''}`;
+        
+        if (visibleCount === 0) {
+            noResults.style.display = 'block';
+            resultsTitle.textContent = 'No results found';
+        } else {
+            resultsTitle.textContent = 'Search Results';
+        }
+    }
+    
+    // Fuzzy match function (title only)
+    function fuzzyMatch(text, query) {
+        if (!query) return false;
+        
+        text = text.toLowerCase();
+        query = query.toLowerCase();
+        
+        // Exact match
+        if (text.includes(query)) return true;
+        
+        // Word prefix matching (matches "eco" to "economics")
+        const words = text.split(/\s+/);
+        for (const word of words) {
+            if (word.startsWith(query)) return true;
+        }
+        
+        // Levenshtein distance based matching for typos
+        if (query.length > 3) {
+            for (const word of words) {
+                if (levenshteinDistance(query, word.substring(0, query.length)) <= 2) {
+                    return true;
+                }
+            }
+        }
+        
+        return false;
+    }
+    
+    // Levenshtein distance algorithm for typo tolerance
+    function levenshteinDistance(a, b) {
+        const matrix = [];
+        
+        for (let i = 0; i <= b.length; i++) {
+            matrix[i] = [i];
+        }
+        
+        for (let j = 0; j <= a.length; j++) {
+            matrix[0][j] = j;
+        }
+        
+        for (let i = 1; i <= b.length; i++) {
+            for (let j = 1; j <= a.length; j++) {
+                if (b.charAt(i - 1) === a.charAt(j - 1)) {
+                    matrix[i][j] = matrix[i - 1][j - 1];
+                } else {
+                    matrix[i][j] = Math.min(
+                        matrix[i - 1][j - 1] + 1,
+                        matrix[i][j - 1] + 1,
+                        matrix[i - 1][j] + 1
+                    );
+                }
+            }
+        }
+        
+        return matrix[b.length][a.length];
+    }
+    
+    // Highlight matching text in title only
+    function highlightText(element, query) {
+        const summary = element.querySelector('summary');
+        
+        // Remove previous highlights
+        removeHighlights(element);
+        
+        // Highlight in summary (title)
+        if (summary.textContent.toLowerCase().includes(query)) {
+            const regex = new RegExp(`(${escapeRegex(query)})`, 'gi');
+            summary.innerHTML = summary.textContent.replace(regex, '<span class="highlight">$1</span>');
+        }
+        
+        // Auto-open details if there's a match
+        const details = element.querySelector('details');
+        if (!details.open) {
+            details.open = true;
+        }
+    }
+    
+    // Remove highlights
+    function removeHighlights(element) {
+        const highlights = element.querySelectorAll('.highlight');
+        highlights.forEach(highlight => {
+            const parent = highlight.parentNode;
+            parent.replaceChild(document.createTextNode(highlight.textContent), highlight);
+            parent.normalize();
+        });
+    }
+    
+    // Escape regex special characters
+    function escapeRegex(string) {
+        return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+    
+    // Event listeners
+    searchBtn.addEventListener('click', runSearch);
+    searchInput.addEventListener('keyup', runSearch);
+    
+    // Initial focus on search input
+    searchInput.focus();
+});
+</script>
+{% endblock %}

@@ -1,0 +1,45 @@
+
+{% extends 'myapp/base.html' %}
+{% load static %}
+{% block content %}
+<br><br>
+<div class="content-detail rule-detail">
+    <h2>{{ content.title }}</h2>
+    
+    <div class="content-meta">
+        <span class="difficulty">Level: {{ content.difficulty.level }}</span>
+    </div>
+    
+    <div class="content-body">
+        <p>{{ content.explanation }}</p>
+    </div>
+    <br>
+    <div class="content-actions">
+        <form id="mark-studied-form" action="{% url 'mark_rule_studied' content.id %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary">Next</button>
+        </form>
+    </div>
+</div>
+
+<script>
+document.getElementById('mark-studied-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    fetch(this.action, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': this.querySelector('[name=csrfmiddlewaretoken]').value
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            window.location.href = "{% url 'learning_content' %}";
+        }
+    });
+});
+</script>
+
+{% endblock %} 
+

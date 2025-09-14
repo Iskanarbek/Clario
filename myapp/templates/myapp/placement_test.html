@@ -1,0 +1,60 @@
+{% extends 'myapp/base.html' %}
+{% load static %}
+{% block content %}
+<br> 
+<br> 
+
+<div class="placement-test">
+    <h2>Placement Test</h2>
+    
+    {% if error %}
+    <div class="error-message">{{ error }}</div>
+    <a href="{% url 'dashboard' %}" class="btn btn-primary">Return to Dashboard</a>
+    {% else %}
+    <p>Answer the following questions to determine your appropriate learning level. </p>
+   <br><br>
+
+    
+    <form method="post">
+        {% csrf_token %}
+        
+        {% for question in questions %}
+        <div class="test-question">
+            <h3>Question {{ forloop.counter }}</h3>
+            <p>{{ question.question }}</p>
+            
+            <div class="options">
+                <label>
+                    <input type="radio" name="question_{{ question.id }}" value="A" required>
+                    <strong>A)</strong> {{ question.option_a }}
+                </label>
+                
+                <label>
+                    <input type="radio" name="question_{{ question.id }}" value="B">
+                    <strong>B)</strong> {{ question.option_b }}
+                </label>
+                
+                <label>
+                    <input type="radio" name="question_{{ question.id }}" value="C">
+                    <strong>C)</strong> {{ question.option_c }}
+                </label>
+                
+                <label>
+                    <input type="radio" name="question_{{ question.id }}" value="D">
+                    <strong>D)</strong> {{ question.option_d }}
+                </label>
+            </div>
+        </div>
+        {% endfor %}
+        
+        <div class="test-actions">
+            <button type="submit" class="btn btn-primary">Submit Test</button>
+             <br>
+              <br>
+            <a href="{% url 'dashboard' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+    {% endif %}
+    <br><br><br>
+</div>
+{% endblock %}

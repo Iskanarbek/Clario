@@ -1,0 +1,36 @@
+{% extends 'myapp/base.html' %}
+{% load static %}
+{% block content %}
+<br><br><br>
+<div class="learning-content">
+    <h2>Congratulations</h2>
+    
+    {% if no_content %}
+    <div class="no-content">
+        <p>You've completed all available content at your current level!</p>
+        
+        {% if user_progress.current_level.level < 5 %}
+        <p>You'll be automatically moved to the next level when new content is available.</p>
+        {% else %}
+        <p> Check back later for new content.</p>
+        {% endif %}
+        <br>
+        
+        <a href="{% url 'dashboard' %}" class="btn btn-primary">Return to Dashboard</a>
+    </div>
+    {% else %}
+    <div class="loading">
+        <p>Loading your next learning item...</p>
+        <div class="spinner"></div>
+    </div>
+    <script>
+        // Small delay to show loading message, then redirect
+        setTimeout(function() {
+            window.location.href = "{% url 'learning_content' %}";
+        }, 500);
+    </script>
+    {% endif %}
+</div>
+
+<br><br>
+{% endblock %}

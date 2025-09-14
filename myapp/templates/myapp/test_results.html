@@ -1,0 +1,39 @@
+{% extends 'myapp/base.html' %}
+{% load static %}
+{% block content %}
+<br> <br>
+<div class="test-results">
+    <h2>Placement Test Results</h2>
+    
+    <div class="result-card">
+        <h3>Your Score: {{ score|floatformat:1 }}%</h3>
+        <p class="result-level">Assigned Level: Level {{ level.level }} - {{ level.name }}</p>
+        
+        <div class="score-breakdown">
+            <p><strong>Correct Answers:</strong> {{ correct }}/{{ total }}</p>
+        </div>
+        
+        <div class="level-description">
+            <h4>What this level means:</h4>
+            <p> 
+                {% if level.level == 1 %}
+                You're starting from the basics. Level 1 covers fundamental economic concepts and terminology.
+                {% elif level.level == 2 %}
+                You have some basic knowledge. Level 2 builds on fundamentals with more detailed concepts.
+                {% elif level.level == 3 %}
+                You have intermediate knowledge. Level 3 covers more complex economic theories and models.
+                {% elif level.level == 4 %}
+                You have advanced knowledge. Level 4 delves into sophisticated economic analysis.
+                {% else %}
+                You have expert-level knowledge. Level 5 covers advanced economic theories and applications.
+                {% endif %}
+            </p>
+        </div>
+        <br>
+        <div class="result-actions">
+            <a href="{% url 'learning_content' %}" class="btn btn-primary">Start Learning at Level {{ level.level }}</a> <br>
+            <a href="{% url 'dashboard' %}" class="btn btn-secondary">Return to Dashboard</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

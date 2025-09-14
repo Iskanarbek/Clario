@@ -1,0 +1,88 @@
+{% extends 'myapp/base.html' %}
+{% load static %}
+
+{% block content %}
+<br>
+
+<div class="dashboard">
+    <br> 
+    
+    <h3>
+    Welcome to the Home Page<br>   
+    </h3>
+   
+    <br> 
+    
+    <div class="stats">
+        <div class="stat-card">
+        <h3>Current Level</h3>
+        <p class="stat-value">
+            {% if user_progress.current_level.level == 1 %}
+                Beginner
+            {% elif user_progress.current_level.level == 2 %}
+                Elementary
+            {% elif user_progress.current_level.level == 3 %}
+                Intermediate
+            {% elif user_progress.current_level.level == 4 %}
+                Upper-Intermediate
+            {% elif user_progress.current_level.level == 5 %}
+                Advanced
+            {% else %}
+                Unknown
+            {% endif %}
+        </p>
+    </div>
+
+        
+        <div class="stat-card">
+            <h3>Terms Studied</h3>
+            <p class="stat-value">{{ user_progress.terms_studied.count }}</p>
+        </div>
+        
+        <div class="stat-card">
+            <h3>Rules Studied</h3>
+            <p class="stat-value">{{ user_progress.rules_studied.count }}</p>
+        </div>
+        
+        <div class="stat-card">
+            <h3>Problems Solved</h3>
+            <p class="stat-value">{{ user_progress.problems_solved.count }}</p>
+        </div>
+    </div>
+
+    <div class="actions">
+        {% if has_started_learning %}
+            <div class="action-card">
+                <h3>Continue Learning</h3>
+                <p>Your current level: Level {{ user_progress.current_level.level }}</p>
+                <a href="{% url 'learning_content' %}" class="btn btn-primary">Continue</a>
+            </div>
+
+            <div class="action-card">
+                <h3>Retake Placement Test</h3>
+                {% if user_progress.placement_test_taken %}
+                    <p>Your previous score: {{ user_progress.placement_test_score|floatformat:1 }}%</p>
+                {% else %}
+                    <p>You skipped placement test and started from zero</p>
+                {% endif %}
+                <a href="{% url 'placement_test' %}" class="btn btn-secondary">Retake Test</a>
+            </div>
+        {% else %}
+            <div class="action-card">
+                <h3>Start Learning</h3>
+                <p>Begin your economics journey from the basics</p>
+                <a href="{% url 'start_from_zero' %}" class="btn btn-primary">Start from Zero</a>
+            </div>
+            
+            <div class="action-card">
+                <h3>Take Placement Test</h3>
+                <p>Test your current knowledge to find your appropriate level</p>
+                <a href="{% url 'placement_test' %}" class="btn btn-secondary">Take Test</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<br> <br><br><br>
+<br> <br> 
+{% endblock %}

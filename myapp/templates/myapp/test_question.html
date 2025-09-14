@@ -1,0 +1,86 @@
+{% extends 'myapp/base.html' %}
+{% load static %}
+{% block content %}
+<div class="content-detail test-question-detail">
+    <h2>Test Question</h2>
+    
+    <div class="content-meta">
+        <span class="difficulty">Level: {{ content.difficulty.level }}</span>
+    </div>
+    
+    <div class="content-body">
+        <p>{{ content.question }}</p>
+        
+        <div class="options">
+            <label>
+                <input type="radio" name="answer" value="A" required>
+                {{ content.option_a }}
+            </label>
+            
+            <label>
+                <input type="radio" name="answer" value="B">
+                {{ content.option_b }}
+            </label>
+            
+            <label>
+                <input type="radio" name="answer" value="C">
+                {{ content.option_c }}
+            </label>
+            
+            <label>
+                <input type="radio" name="answer" value="D">
+                {{ content.option_d }}
+            </label>
+        </div>
+    </div>
+    
+    <div class="content-actions">
+        <button id="submit-answer" class="btn btn-primary">Submit Answer</button>
+    </div>
+   
+    <div id="result" style="display: none;">
+        <h3 id="result-title"></h3>
+        <p id="explanation"></p>
+        <button id="continue" class="btn btn-primary" style="display: none;">Continue</button>
+    </div>
+</div>
+
+<script>
+document.getElementById('submit-answer').addEventListener('click', function() {
+    const selectedOption = document.querySelector('input[name="answer"]:checked');
+    if (!selectedOption) return;
+    
+    const answer = selectedOption.value;
+    
+    // For test questions, we'll just show the result without saving progress
+    const correctAnswer = '{{ content.correct_answer }}';
+    const isCorrect = answer === correctAnswer;
+    
+    document.getElementById('options').style.pointerEvents = 'none';
+    document.getElementById('submit-answer').style.display = 'none';
+    
+    const resultDiv = document.getElementById('result');
+    const resultTitle = document.getElementById('result-title');
+    const explanation = document.getElementById('explanation');
+    const continueBtn = document.getElementById('continue');
+    
+    if (isCorrect) {
+        resultTitle.textContent = 'Correct!';
+        resultTitle.style.color = 'green';
+    } else {
+        resultTitle.textContent = 'Incorrect! The correct answer is ' + correctAnswer;
+        resultTitle.style.color = 'red';
+    }
+    
+    explanation.textContent = '{{ content.explanation }}';
+    continueBtn.style.display = 'block';
+    
+    resultDiv.style.display = 'block';
+    
+    continueBtn.addEventListener('click', function() {
+        // Move to next question or finish test
+        window.location.href = "{% url 'placement_test' %}";
+    });
+});
+</script>
+{% endblock %}

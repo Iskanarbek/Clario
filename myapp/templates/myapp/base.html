@@ -1,0 +1,114 @@
+{% comment %} {% extends 'myapp/base.html' %} {% endcomment %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clario</title>
+    
+    <link rel="stylesheet" href="{% static 'myapp/style.css' %}">
+</head>
+<body>
+    <header>
+    <div class="container">
+        <div class="header-logo">Clario</div>
+        
+        <nav class="header-nav" id="main-nav">
+            {% if user.is_authenticated %}
+                <a href="{% url 'dashboard' %}" class="home-btn {% if request.path == '/dashboard/' %}active{% endif %}">🏠 Home</a>
+                <a href="{% url 'learning_content' %}" class="{% if '/learn/' in request.path %}active{% endif %}">Learn</a>
+                <a href="{% url 'search' %}" class="{% if request.path == '/search/' %}active{% endif %}">Search</a>
+                <a href="{% url 'logout' %}">Logout</a>
+            {% else %}
+                <a href="{% url 'index' %}" class="{% if request.path == '/' %}active{% endif %}">Welcome page</a>
+                <a href="{% url 'search' %}" class="{% if request.path == '/search/' %}active{% endif %}">Search</a>
+                <a href="{% url 'login' %}" class="{% if request.path == '/login/' %}active{% endif %}">Login</a>
+                <a href="{% url 'register' %}" class="{% if request.path == '/register/' %}active{% endif %}">Register</a>
+            {% endif %}
+        </nav>
+        
+        <button class="menu-button" id="menu-button">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </div>
+    
+    <div class="menu-overlay" id="menu-overlay"></div>
+</header>
+
+
+    <main class="container">
+        
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer>
+        <br> 
+  <div class="footer-content">
+    <div class="footer-section about">
+      <h3>About</h3>
+      <p>Clario is an educational <br> platform making economics clear and practical.</p>
+    </div>
+
+    <div class="footer-section founders">
+      <h3>Founders</h3>
+      <p><strong>Odilov Iskandarbek</strong> – <a href="mailto:husan@example.com">iskandar24032009@gmail.com</a></p>
+      <p><strong>Olimov Diyorbek</strong> – <a href="mailto:ali@example.com">diyorbekolimov0709@gmail.com</a></p>
+    </div>
+
+    <div class="footer-section vision">
+      <h3>Vision</h3>
+      <p>Empowering students to apply economics in real life.</p>
+    </div>
+  </div>
+  <br> 
+
+</footer>
+
+
+</body>
+</html>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const menuButton = document.getElementById('menu-button');
+    const mainNav = document.getElementById('main-nav');
+    const menuOverlay = document.getElementById('menu-overlay');
+    
+    // Toggle mobile menu
+    function toggleMenu() {
+        menuButton.classList.toggle('active');
+        mainNav.classList.toggle('active');
+        menuOverlay.classList.toggle('active');
+    }
+    
+    menuButton.addEventListener('click', toggleMenu);
+    menuOverlay.addEventListener('click', toggleMenu);
+    
+    // Close menu when clicking on links
+    const navLinks = mainNav.querySelectorAll('a');
+    navLinks.forEach(link => {
+        link.addEventListener('click', function() {
+            if (window.innerWidth <= 768) {
+                toggleMenu();
+            }
+        });
+    });
+    
+    // Highlight current page
+    function highlightCurrentPage() {
+        const currentPath = window.location.pathname;
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === currentPath) {
+                link.classList.add('active');
+            }
+        });
+    }
+    
+    highlightCurrentPage();
+});
+</script>

@@ -1,0 +1,25 @@
+{% extends 'myapp/base.html' %}
+{% load static %}
+{% block content %}
+<div class="analytics-dashboard">
+    <h2>Learning Analytics</h2>
+    
+    <div class="analytics-grid">
+        <div class="analytics-card">
+            <h3>Learning Statistics</h3>
+            <p>Total Items: {{ stats.total_items }}</p>
+            <p>Terms: {{ stats.terms_count }}</p>
+            <p>Rules: {{ stats.rules_count }}</p>
+            <p>Problems: {{ stats.problems_count }}</p>
+        </div>
+        
+        <div class="analytics-card">
+            <h3>Performance</h3>
+            <p>Success Rate: {{ stats.success_rate }}%</p>
+            <p>Learning Pace: {{ stats.learning_pace }} items/day</p>
+            <p>Preference: {{ stats.content_preference }}</p>
+            <p>Days Active: {{ stats.days_active }}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

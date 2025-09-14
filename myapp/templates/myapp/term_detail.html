@@ -1,0 +1,88 @@
+{% extends 'myapp/base.html' %}
+{% load static %}
+{% block content %}
+<br> <br>
+<div class="content-detail term-detail">
+    <h2>{{ content.title }}</h2>
+    
+    <div class="content-meta">
+        <span class="difficulty">Level: {{ content.difficulty.level }}</span>
+    </div>
+    
+    <div class="content-body">
+        <p>{{ content.explanation }}</p>
+    </div>
+    
+    <div class="content-actions">
+        <form id="mark-studied-form" action="{% url 'mark_term_studied' content.id %}" method="post">
+            {% csrf_token %}
+            <br>
+            <button type="submit" class="btn btn-primary">Next</button>
+        </form>
+    </div>
+</div>
+
+<script>
+document.getElementById('mark-studied-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    fetch(this.action, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': this.querySelector('[name=csrfmiddlewaretoken]').value
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            window.location.href = "{% url 'learning_content' %}";
+        }
+    });
+});
+
+// ==== BUTTON ANIMATION ====
+const btn = document.querySelector(".btn-primary");
+
+btn.addEventListener("click", function(e) {
+    // Ripple effect
+    this.classList.add("btn-ripple");
+    setTimeout(() => this.classList.remove("btn-ripple"), 600);
+
+    // Flash glow
+    this.classList.add("btn-flash");
+    setTimeout(() => this.classList.remove("btn-flash"), 500);
+});
+
+// ==== LEVEL UP ANIMATION ====
+function triggerLevelUp() {
+    const levelSpan = document.querySelector(".difficulty");
+    if (levelSpan) {
+        levelSpan.classList.add("level-up");
+
+        // Confetti burst
+        for (let i = 0; i < 50; i++) {
+            const confetti = document.createElement("div");
+            confetti.classList.add("confetti");
+            confetti.style.left = Math.random() * window.innerWidth + "px";
+            confetti.style.setProperty("--hue", Math.floor(Math.random() * 360));
+            document.body.appendChild(confetti);
+            setTimeout(() => confetti.remove(), 2500);
+        }
+
+        setTimeout(() => levelSpan.classList.remove("level-up"), 3000);
+    }
+}
+
+// ==== Detect level change ====
+const currentLevel = "{{ content.difficulty.level }}";
+const prevLevel = localStorage.getItem("userLevel");
+
+if (prevLevel && prevLevel !== currentLevel) {
+    triggerLevelUp();
+}
+localStorage.setItem("userLevel", currentLevel);
+
+</script>
+
+{% endblock %} 
+

@@ -1,0 +1,54 @@
+{% extends 'myapp/base.html' %}
+{% load static %}
+{% block content %}
+<div class="hero">
+    <h2>
+        <strong> Build your own “economy tree” ! 🚀</strong>  <br><br>
+        Adaptive platform that grows with you:   <br>
+    <strong>500+ </strong>terms, <strong>100+ </strong>rules, and <strong> 50+ </strong> problems to sharpen your thinking. <br>  
+    <strong>Mistakes? </strong>Get instant explanations. <br></h2>
+    
+    <br>
+    {% if not user.is_authenticated %}
+    <div class="auth-links">
+        <a href="{% url 'register' %}" class="btn btn-primary">Get Started</a>
+        <a href="{% url 'login' %}" class="btn btn-secondary">Login</a>
+    </div>
+
+    <br> 
+    <br> 
+
+
+    <div class="footer-section users">
+      
+        <h3>🌍 Our Community</h3>
+        <p>
+            <strong class="user-counter">{{ user_count }}</strong> learners have already joined us 🚀
+        </p>
+    
+    </div>
+
+    {% else %}
+    <div class="auth-links">
+        <a href="{% url 'dashboard' %}" class="btn btn-primary">Continue Learning</a>
+    </div>
+    {% endif %}
+</div>
+
+<div class="features">
+    <div class="feature">
+        <h3>Terms</h3>
+        <p>Learn essential economic terminology with clear explanations</p>
+    </div>
+    <div class="feature">
+        <h3>Rules & Theories</h3>
+        <p>Understand fundamental economic principles and models</p>
+    </div>
+        <div class="feature">
+        <h3>Problems</h3>
+        <p>Test your knowledge with practical problems and case studies</p>
+    </div>
+</div>
+
+<br><br>
+{% endblock %}
