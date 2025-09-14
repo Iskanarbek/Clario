@@ -94,9 +94,8 @@ DATABASES = {
 }
 
 database_url = os.environ.get("DATABASE_URL")
-
-
-DATABASES['default']= dj_database_url.parse(database_url)
+if database_url:
+    DATABASES['default'] = dj_database_url.parse(database_url)
 
 
 # Password validation postgresql://clario_db_user:oFMZUmL8f4CelN2ppeh9IRTbzgecPQig@dpg-d32ne9idbo4c73aji41g-a.oregon-postgres.render.com/clario_db
@@ -183,3 +182,13 @@ STATICFILES_DIRS = [
 
 # For production, you'll also need:
 STATIC_ROOT = BASE_DIR / "staticfiles"
+
+
+import os
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [BASE_DIR / "static"]  # если у тебя есть папка static/ в проекте
+STATIC_ROOT = BASE_DIR / "staticfiles"    # сюда collectstatic будет собирать
