@@ -41,7 +41,7 @@
                         <details>
                             <summary>{{ term.title }}</summary>
                             <div class="content">
-                                <p>{{ term.explanation }}</p>
+                                {{ term.explanation|safe }}
                             </div>
                         </details>
                     </li>
@@ -57,7 +57,7 @@
                         <details>
                             <summary>{{ rule.title }}</summary>
                             <div class="content">
-                                <p>{{ rule.explanation }}</p>
+                              {{ rule.explanation|safe  }}
                             </div>
                         </etails>
                     </li>
