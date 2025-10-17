@@ -17,6 +17,7 @@ ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "*").split()
 # Application definition
 INSTALLED_APPS = [
     "myapp",
+    # "ckeditor",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -56,21 +57,34 @@ TEMPLATES = [
 WSGI_APPLICATION = "myproject.wsgi.application"
 
 # Database
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "todo_django_app",
-        "USER": "postgres",
-        "PASSWORD": "24032009",
-        "HOST": "localhost",
-        "PORT": "5432",
-    }
-}
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.postgresql",
+#         "NAME": "todo_django_app",
+#         "USER": "postgres",
+#         "PASSWORD": "24032009",
+#         "HOST": "localhost",
+#         "PORT": "5432",
+#     }
+# }
 
-# On Render → override with DATABASE_URL
-database_url = os.environ.get("DATABASE_URL")
-if database_url:
-    DATABASES["default"] = dj_database_url.parse(database_url)
+# # On Render → override with DATABASE_URL
+# database_url = os.environ.get("DATABASE_URL")
+# if database_url:
+#     DATABASES["default"] = dj_database_url.parse(database_url)
+
+
+import dj_database_url
+import os
+
+DATABASE_URL = os.environ.get("DATABASE_URL")  # <- твой Render URL
+if DATABASE_URL:
+    DATABASES = {
+        'default': dj_database_url.parse(DATABASE_URL, conn_max_age=600)
+    }
+
+
+
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
